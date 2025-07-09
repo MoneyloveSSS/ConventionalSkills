@@ -55,13 +55,12 @@ Vtube Studio面部捕捉只能驱动标准参数。
     - 颜色校正：调整图像色调和对比度。
 
 -  **滤色（Screen）**：原理：将两个图层的反相颜色相乘，再反相结果。使图像变亮，与正片叠底相反。
-
      - **效果**：
        - 任何颜色与白色滤色结果为白色。
        - 任何颜色与黑色滤色保持不变。
-
+     
      - **应用**：用于提亮图像或创建光效。
-
+     
 - **叠加（Overlay）**：作用：结合正片叠底和滤色的效果，增强对比度。
 
      - 原理：
@@ -246,7 +245,7 @@ PSD中所有的蒙版，导入Live2D后均会失效。需要逐步分别将每�
 
 
 
-变形器
+**变形器**
 
 1. 继承：需要删除某个变形器，但变形器的变形内容需要保留时使用。
 
@@ -285,6 +284,48 @@ PSD中所有的蒙版，导入Live2D后均会失效。需要逐步分别将每�
 **动作反转**
 
 令部件或变形器进行垂直轴对称反转。作用于变形器时，依据对称轴则是变形器的中心；没有变形器时依据的对称轴则是整个画布的中心。反转并不是按照图形逻辑进行翻转，而是将对称轴一边的变形，镜像反转到另一边。一些特殊情况下，明明是对称图形，但是反转结果并不对成。
+
+
+
+
+
+**基础参数**
+
+- ParamAngleX：头X
+- ParamAngleY：头Y
+- ParamAngleZ：头Z
+- ParamEyeLOpen/ParamEyeROpen：左/右眼开闭
+- ParamEyeLSmile/ParamEyeRSmile：左/右眼微笑
+  - <img src="asserts/Live2D/3月28日(3).gif" alt="3月28日(3)" style="zoom: 50%;" />
+- ParamEyeBallX：眼珠X
+- ParamEyeBallY：眼珠Y
+- ParamBrowLY/ParamBrowRY：左/右眉Y
+- ParamBrowLX/ParamBrowRX：左/右眉X
+- ParamBrowLAngle/ParamBrowRAngle：左/右眉角度，功能有点重叠，目前用的不多
+- ParamBrowLForm/ParamBrowRForm：左/右眉变形
+  - <img src="asserts/Live2D/3月28日(1).gif" alt="3月28日(1)" style="zoom:50%;" />
+- ParamMouthForm：嘴 变形
+- ParamMouthOpenY：嘴 张开和闭合
+- ParamCheek：脸颊泛红（用的极少）
+- ParamBodyAngleX：身体旋转X
+- ParamBodyAngleY：身体旋转Y
+- ParamBodyAngleZ：身体旋转Z
+- ParamBreath：呼吸
+  - <img src="asserts/Live2D/3月28日(2).gif" alt="3月28日(2)" style="zoom:50%;" />
+- ParamHairFront摇动前发/ParamHairSide摇动侧发/ParamHairBack/摇动后发
+- ParamMouthX (Input：MouthX，Webcam无此输入)：嘴X
+  - <img src="asserts/Live2D/3月28日(4).gif" alt="3月28日(4)" style="zoom: 33%;" />
+- ParamCheekPuff（Input：ParamCheekPuff，IOS Only）：向上鼓起脸颊
+  - <img src="asserts/Live2D/3月28日(9).gif" alt="3月28日(9)" style="zoom:33%;" />
+- PuckerTongue（Input：Tongueout，Webcam无此输入）：吐舌
+
+
+
+> 对于变形参数Form/Smile，-1通常是往下变形，1通常是往上变形。（MouthForm除外）。
+>
+> 其中，ParamMouthX与ParamCheekPuff一般只与VB一起进行制作，被计价算入VB中。
+
+
 
 
 
@@ -418,7 +459,7 @@ PSD中所有的蒙版，导入Live2D后均会失效。需要逐步分别将每�
 
 ## 蒙皮
 
- 变形器路径进行蒙皮：依据规划的变形路径，将一个个完整的部件，分成成若干份并自动使用胶水黏合，同时生成若干相关旋转变形器，并创建相关参数，自动制作相关旋转变形。
+ 变形器路径进行蒙皮：依据规划的变形路径，将一个个完整的部件，分成成若干份并自动使用胶水黏合，**同时生成若干相关旋转变形器，并创建相关参数**，自动制作相关旋转变形。
 
 用途：超快制作长条状物体的物理效果的。如长发，飘带，尾巴。
 
@@ -483,15 +524,45 @@ PSD中所有的蒙版，导入Live2D后均会失效。需要逐步分别将每�
 
 
 
-# 变形器
 
 
 
-## 旋转变形器
+
+眼睑
+
+- 制作眼睑的X，Y参数
+- 可由嘴巴参数、EyeOpen驱动
+
+
+
+利用物理驱动九轴，利用物理参数，增加模型的流畅度，平滑度，增加缓冲，减少撞墙感。
+
+- 新建自定义参数：头身XYZ
+- 创建多个物理组，利用基础参数，驱动自定义头身XYZ参数
+
+
+
+
+
+身体九轴
+
+- 创建若干个物理组，由头XYZ，驱动身体旋转XYZ
+- 创建多个物理组，由身体旋转XYZ参数，驱动所有身体参数
+  - ParamBodyAngleX 驱动：身体X轴平移，双脚X移动，手部旋转，衣服旋转与物理
+
+
+
+
+
+## 变形器
+
+
+
+### 旋转变形器
 
 **弯曲变形器不会使旋转变形器里的部件。**
 
-用途：当耳环等部件，由于与耳朵等部件放置于同一变形器，制作九轴发生弯曲时，可对耳环创建旋转变形器，从而使耳环不发生弯曲。
+用途：当耳环等部件，由于与耳朵等部件放置于同一变形器，制作九轴发生弯曲时，可单独对耳环创建旋转变形器（无需设置参数），从而使耳环不发生弯曲。
 
 <img src="asserts/Live2D/QQ_1741627617130.png" alt="QQ_1741627617130" style="zoom:50%;" />
 
@@ -503,49 +574,58 @@ PSD中所有的蒙版，导入Live2D后均会失效。需要逐步分别将每�
 
 
 
-## 九轴
+## 纹理集
 
-推荐**脸的每个部件，都分别创建一个单独的变形器。**
+模型导出为运行档时，需要先生成纹理集。
 
-如果嘴巴需要匹配九轴，需要多个单独的嘴巴变形器。
+![c1d9375b93dbc508d10f3038f90bdd86](asserts/Live2D/c1d9375b93dbc508d10f3038f90bdd86.png)
 
-
-
-
-
-**九轴制作步骤：**
-
-1. 创建头XY，头Z，身体XY的旋转变形器
-
-   头XY：
-
-   <img src="asserts/Live2D/QQ_1741629654875.png" alt="QQ_1741629654875" style="zoom:33%;" />
-
-   
-
-2. 制作脸皮5点形变
-
-3. 对前部（五官 ，鼻子，前发，眼镜进行）统一进行位移粗调
-
-4. 对后部（后发，侧发，耳朵）统一进行位移粗调
-
-5. 对各个部件进行5点形变微调
-
-6. 选择脸皮和各个部件，进行头XY四角合成
-
-7. 对各个部件进行4角形变微调
+选择纹理大小，倍率推荐维持100%。
 
 
 
-假如部件是左右对称，做完一边的参数后，可以使用“动作反转”，反转当前形变至另一边。
+点击“自动编排”，Live2D进行整体排布。
 
-![QQ_1741623523294](asserts/Live2D/QQ_1741623523294.png)
+
+
+整体排布存在的问题：
+
+- 可能存在未放置的物体，可以右键由系统放置，或手动放置
+- 可能存在重叠的部件纹理，需要手动调整
+- 纹理集空间利用率较低，留白位置较大
+
+> 如希望在不降低模型实际分辩率的情况下，可以选择纹理大小为2K，同时手动编排，减少纹理集的留白，提高利用率。
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+## VB
+
+模型制作VB参数并开启VB后，眨眼会带来轻微的点头，Z轴范围越大越明显。目前疑似为通病。
+
+VB参数
+
+- ParamMouthFunnel（Input：MouthFunnel）：撅嘴
+  - <img src="asserts/Live2D/3月28日(5).gif" alt="3月28日(5)" style="zoom:33%;" />
+- ParamMouthShrug（Input：MouthShrug）：向上耸嘴
+  - <img src="asserts/Live2D/3月28日(6).gif" alt="3月28日(6)" style="zoom:33%;" />
+- ParamJawOpen（Input：JawOpen）：下巴向下
+  - <img src="asserts/Live2D/3月28日(7).gif" alt="3月28日(7)" style="zoom:33%;" />
+- ParamMouthPressLipOpen（Input：MouthPressLipOpen）：：向下抿嘴
+  - <img src="asserts/Live2D/3月28日(8).gif" alt="3月28日(8)" style="zoom:33%;" />
+- ParamMouthPucker（Input：MouthPucker）：收紧嘴巴
+  - <img src="asserts/Live2D/3月28日(11).gif" alt="3月28日(11)" style="zoom:33%;" />
 
 
 
@@ -617,11 +697,70 @@ PSD中所有的蒙版，导入Live2D后均会失效。需要逐步分别将每�
 
 
 
+## 头九轴
+
+推荐**脸的每个部件，都分别创建一个单独的变形器。**
+
+如果嘴巴需要匹配九轴，需要多个单独的嘴巴变形器。
 
 
 
 
 
+**九轴制作步骤：**
+
+1. 创建头XY，头Z，身体XY的旋转变形器。身体XY变形器为头Z父变形器，头Z为头XY父变形器。
+
+   头xy，头Z，身体XY：
+
+   <img src="asserts/Live2D/QQ_1742230278422.png" alt="QQ_1742230278422" style="zoom: 25%;" />
+
+   ![QQ_1742230336590](asserts/Live2D/QQ_1742230336590.png)
+
+2. 制作脸皮5点形变
+
+3. 对前部（五官 ，鼻子，前发，眼镜进行）统一进行位移粗调
+
+4. 对后部（后发，侧发，耳朵）统一进行位移粗调
+
+5. 对各个部件进行5点形变微调
+
+6. 选择脸皮和各个部件，进行头XY四角合成
+
+7. 对各个部件进行4角形变微调
+
+
+
+假如部件是左右对称，做完一边的参数后，可以使用“动作反转”，反转当前形变至另一边。
+
+![QQ_1741623523294](asserts/Live2D/QQ_1741623523294.png)
+
+
+
+
+
+# 常见问题
+
+**部件/变形器弯曲的部件恢复原状**
+
+直接变形后的部件：点击此按键，可将直接变形后的部件，恢复原状。
+
+<img src="asserts/Live2D/QQ_1742231761276.png" alt="QQ_1742231761276" style="zoom:50%;" />
+
+
+
+变形器弯曲的部件
+
+1. 如某些参数关键帧上存在正常形状，则拉至此关键帧，随后删除错误的关键帧，再重新新建
+2. 如所有参数关键帧上的都不存在正确形状，则删除变形器，对其下所有部件使用“恢复原状”按键。
+
+
+
+
+
+# Vtube Studio
+
+Lip Sync：https://www.youtube.com/watch?v=oJCkqsQ_x_U
 
 
 
